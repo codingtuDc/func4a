@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <solid android:color="#fff" />
+
+    <corners
+        android:topLeftRadius="@dimen/radius_default_dialog_layer"
+        android:topRightRadius="@dimen/radius_default_dialog_layer" />
+
+</shape>

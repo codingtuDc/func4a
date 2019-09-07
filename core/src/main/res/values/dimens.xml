@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="radius_default_dialog_layer">8dp</dimen>
+</resources>

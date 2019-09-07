@@ -1,1 +1,1 @@
-include ':app', ':func4j'
+include ':app', ':func4j', ':core_processor', ':core_processor_annotation', ':core'

@@ -9,6 +9,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core_processor" />
+            <option value="$PROJECT_DIR$/core_processor_annotation" />
             <option value="$PROJECT_DIR$/func4j" />
           </set>
         </option>
