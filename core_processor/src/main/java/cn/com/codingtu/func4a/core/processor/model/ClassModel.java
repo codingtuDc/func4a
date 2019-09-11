@@ -24,6 +24,13 @@ public class ClassModel {
     public Map<Integer, List<String>> subLinesMap;
     public int importLinesIndex;
 
+    public ClassModel(String packageName, String name) {
+        this.packages = packageName;
+        this.oriName = name;
+        this.name = name;
+        this.fullName = this.packages + "." + this.name;
+    }
+
     public ClassModel(Elements elementUtils, TypeElement te, String prex) {
         this.packages = elementUtils.getPackageOf(te).getQualifiedName().toString();
         this.oriName = te.getSimpleName().toString();
@@ -84,7 +91,7 @@ public class ClassModel {
         return null;
     }
 
-    public void importId(IdFunc.Id id) {
-
+    public void addImport(String importStr) {
+        addLinesIfNotExist(this.importLinesIndex, "import " + importStr + ";\r\n");
     }
 }

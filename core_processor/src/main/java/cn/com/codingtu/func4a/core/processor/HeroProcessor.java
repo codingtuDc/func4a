@@ -17,12 +17,15 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.tools.JavaFileObject;
 
+import cn.com.codingtu.func4a.core.processor.annotation.onactivityresult.OnResult4Activity;
 import cn.com.codingtu.func4a.core.processor.annotation.onclick.ClickTag;
 import cn.com.codingtu.func4a.core.processor.annotation.onclick.ClickView;
+import cn.com.codingtu.func4a.core.processor.annotation.permission.PermissionCheck;
 import cn.com.codingtu.func4a.core.processor.annotation.view.FindView;
 import cn.com.codingtu.func4a.core.processor.funcs.IdFunc;
 import cn.com.codingtu.func4a.core.processor.model.ClassModel;
 import cn.com.codingtu.func4j.CountFunc;
+import cn.com.codingtu.func4j.StringFunc;
 import cn.com.codingtu.func4j.ls.Ls;
 import cn.com.codingtu.func4j.ls.each.Each;
 import cn.com.codingtu.func4j.ls.each.MapEach;
@@ -45,7 +48,8 @@ public class HeroProcessor extends BaseProcessor {
         return new Class[]{
                 FindView.class,
                 ClickView.class,
-                ClickTag.class
+                ClickTag.class,
+                PermissionCheck.class
         };
     }
 
@@ -74,6 +78,17 @@ public class HeroProcessor extends BaseProcessor {
             }
         });
 
+        //PermissionCheck
+        ls(roundEnvironment, PermissionCheck.class, new Each<Element>() {
+            @Override
+            public boolean each(int position, Element element) {
+                if (element instanceof ExecutableElement) {
+                    dealPermissionCheck((ExecutableElement) element);
+                }
+                return false;
+            }
+        });
+
         Ls.ls(cms, new MapEach<String, ClassModel>() {
             @Override
             public boolean each(int position, String s, ClassModel cm) {
@@ -85,6 +100,47 @@ public class HeroProcessor extends BaseProcessor {
         cms.clear();
 
         return false;
+    }
+
+
+    private void dealPermissionCheck(ExecutableElement ee) {
+
+        ClassModel cm = getClassModel((TypeElement) ee.getEnclosingElement());
+
+        cm.addImport(PACKAGE_PERMISSION + ".Permissions");
+
+        String methodName = ee.getSimpleName().toString();
+        String checkIdName = StringFunc.getStaticName(methodName);
+
+        cm.addLines(onPermissionsBackLI, "        if (requestCode == Permissions." + checkIdName + ") {\r\n");
+        cm.addLines(onPermissionsBackLI, "            this.binder." + methodName + "(");
+
+        List<? extends VariableElement> ps = ee.getParameters();
+        int count = CountFunc.count(ps);
+        for (int i = 0; i < count; i++) {
+            VariableElement ve = ps.get(i);
+
+            String typeStr = ve.asType().toString();
+
+            if ("boolean".equals(typeStr)) {
+                cm.addImport(PACKAGE_PERMISSION + ".PermissionFunc");
+                cm.addLines(onPermissionsBackLI, "PermissionFunc.allow(grantResults)");
+            }else if ("java.lang.String[]".equals(typeStr)) {
+                cm.addLines(onPermissionsBackLI,"permissions");
+            }else if ("int[]".equals(typeStr)) {
+                cm.addLines(onPermissionsBackLI,"grantResults");
+            }
+
+            if (i < count - 1) {
+                cm.addLines(onPermissionsBackLI, ", ");
+            }
+
+        }
+
+        cm.addLines(onPermissionsBackLI, ");\r\n");
+        cm.addLines(onPermissionsBackLI, "        }\r\n");
+        cm.addLines(onPermissionsBackLI, "\r\n");
+
     }
 
     private void dealClickViewMethodElement(ExecutableElement ee) {
@@ -111,7 +167,7 @@ public class HeroProcessor extends BaseProcessor {
             VariableElement ve = parameters.get(i);
             ClickTag clickTag = ve.getAnnotation(ClickTag.class);
             if (clickTag != null) {
-                IdFunc.Id id = IdFunc.elementToId(cm,ve, ClickTag.class, clickTag.value());
+                IdFunc.Id id = IdFunc.elementToId(cm, ve, ClickTag.class, clickTag.value());
                 cm.addSubLines(onClickLinesIndex, "(" + ve.asType().toString() + ") v.getTag(" + id.code + ")");
             } else {
                 String type = ve.asType().toString();
@@ -248,12 +304,7 @@ public class HeroProcessor extends BaseProcessor {
             writer.close();
         } catch (IOException e) {
             log(e.getMessage());
-
         }
-    }
-
-    private void ls(RoundEnvironment roundEnvironment, Class clazz, Each<Element> each) {
-        Ls.ls(roundEnvironment.getElementsAnnotatedWith(clazz), each);
     }
 
 

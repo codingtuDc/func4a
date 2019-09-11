@@ -1,5 +1,6 @@
 package cn.com.codingtu.func4a.core.processor;
 
+import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
 
 import java.util.HashSet;
@@ -9,15 +10,24 @@ import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.Processor;
+import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 
 import cn.com.codingtu.func4a.core.processor.funcs.IdFunc;
+import cn.com.codingtu.func4j.ls.Ls;
+import cn.com.codingtu.func4j.ls.each.Each;
 
 import static java.util.Objects.requireNonNull;
 
 public abstract class BaseProcessor extends AbstractProcessor {
+
+    public static final String PACKAGE_BASE = "cn.com.codingtu.func4a";
+    public static final String PACKAGE_CORE = PACKAGE_BASE + ".core";
+    public static final String PACKAGE_PERMISSION = PACKAGE_CORE + ".permission";
 
     protected Messager mMessager;
     protected Elements mElementUtils;
@@ -27,7 +37,6 @@ public abstract class BaseProcessor extends AbstractProcessor {
         super.init(processingEnv);
         mMessager = processingEnv.getMessager();
         mElementUtils = processingEnv.getElementUtils();
-        log("init");
         IdFunc.trees = Trees.instance(processingEnv);
         IdFunc.rScanner = new IdFunc.RScanner();
     }
@@ -46,6 +55,11 @@ public abstract class BaseProcessor extends AbstractProcessor {
     @Override
     public SourceVersion getSupportedSourceVersion() {
         return SourceVersion.latestSupported();
+    }
+
+
+    protected void ls(RoundEnvironment roundEnvironment, Class clazz, Each<Element> each) {
+        Ls.ls(roundEnvironment.getElementsAnnotatedWith(clazz), each);
     }
 
     protected void log(String msg) {
