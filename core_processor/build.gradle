@@ -6,6 +6,7 @@ dependencies {
     //
     implementation project(':core_processor_annotation')
     implementation project(':func4j')
+    compileOnly files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
 }
 
 sourceCompatibility = "8"

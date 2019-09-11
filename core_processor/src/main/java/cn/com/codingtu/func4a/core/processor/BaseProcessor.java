@@ -1,5 +1,7 @@
 package cn.com.codingtu.func4a.core.processor;
 
+import com.sun.source.util.Trees;
+
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -10,6 +12,10 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
+
+import cn.com.codingtu.func4a.core.processor.funcs.IdFunc;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class BaseProcessor extends AbstractProcessor {
 
@@ -22,6 +28,8 @@ public abstract class BaseProcessor extends AbstractProcessor {
         mMessager = processingEnv.getMessager();
         mElementUtils = processingEnv.getElementUtils();
         log("init");
+        IdFunc.trees = Trees.instance(processingEnv);
+        IdFunc.rScanner = new IdFunc.RScanner();
     }
 
     @Override
@@ -43,6 +51,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
     protected void log(String msg) {
         mMessager.printMessage(Diagnostic.Kind.NOTE, msg);
     }
+
 
     protected abstract Class[] getSupportTypes();
 }
