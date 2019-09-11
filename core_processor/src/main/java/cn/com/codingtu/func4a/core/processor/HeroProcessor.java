@@ -147,12 +147,9 @@ public class HeroProcessor extends BaseProcessor {
 
     private void dealFindViewElement(VariableElement ve) {
         ClassModel cm = getClassModel(ve);
-
         //String type = ve.asType().toString();
-
         String vname = ve.getSimpleName().toString();
         int id = ve.getAnnotation(FindView.class).value();
-
         cm.addConstructorLine("        this.binder." + vname + " = view.findViewById(" + id + ");\r\n");
     }
 
