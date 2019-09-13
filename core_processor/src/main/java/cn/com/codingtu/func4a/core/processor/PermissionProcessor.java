@@ -49,7 +49,7 @@ public class PermissionProcessor extends BaseProcessor {
         });
 
         if (cm != null) {
-            createClass(cm);
+            createClass(cm, null);
         }
 
         cm = null;
@@ -100,33 +100,18 @@ public class PermissionProcessor extends BaseProcessor {
         if (cm == null) {
             cm = new ClassModel(PACKAGE_PERMISSION, "Permissions");
 
-            int packageLinesIndex = cm.createLines();
-            cm.addLines(packageLinesIndex, "package " + cm.packages + ";\r\n");
             int classLinesIndex = cm.createLines();
             cm.addLines(classLinesIndex, "\r\n");
             cm.addLines(classLinesIndex, "public class " + cm.name + " {\r\n");
+
             fieldLinesIndex = cm.createLines();
             cm.addLines(fieldLinesIndex, "\r\n");
 
             checkLinesIndex = cm.createLines();
 
-            int endLinesIndex = cm.createLines();
-            cm.addLines(endLinesIndex, "}\r\n");
+            cm.createEndLines();
         }
 
         return cm;
-    }
-
-    private void createClass(ClassModel cm) {
-        try {
-            JavaFileObject jfo = processingEnv.getFiler().createSourceFile(cm.fullName);
-            Writer writer = jfo.openWriter();
-            writer.write(cm.getLines());
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            log(e.getMessage());
-
-        }
     }
 }

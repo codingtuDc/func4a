@@ -3,6 +3,8 @@ package cn.com.codingtu.func4a.core.processor;
 import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -16,8 +18,10 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 
 import cn.com.codingtu.func4a.core.processor.funcs.IdFunc;
+import cn.com.codingtu.func4a.core.processor.model.ClassModel;
 import cn.com.codingtu.func4j.ls.Ls;
 import cn.com.codingtu.func4j.ls.each.Each;
 
@@ -64,6 +68,27 @@ public abstract class BaseProcessor extends AbstractProcessor {
 
     protected void log(String msg) {
         mMessager.printMessage(Diagnostic.Kind.NOTE, msg);
+    }
+
+    protected void createClass(ClassModel cm, DealClassModel dealClassModel) {
+        try {
+            JavaFileObject jfo = processingEnv.getFiler().createSourceFile(cm.fullName);
+            Writer writer = jfo.openWriter();
+
+            if (dealClassModel != null)
+                dealClassModel.deal(cm);
+
+            writer.write(cm.getLines());
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            log(e.getMessage());
+
+        }
+    }
+
+    public static interface DealClassModel {
+        public void deal(ClassModel cm);
     }
 
 

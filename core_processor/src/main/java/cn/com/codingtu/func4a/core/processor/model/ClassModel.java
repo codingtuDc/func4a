@@ -29,6 +29,7 @@ public class ClassModel {
         this.oriName = name;
         this.name = name;
         this.fullName = this.packages + "." + this.name;
+        addPackageLines();
     }
 
     public ClassModel(Elements elementUtils, TypeElement te, String prex) {
@@ -36,6 +37,11 @@ public class ClassModel {
         this.oriName = te.getSimpleName().toString();
         this.name = oriName + "_" + prex;
         this.fullName = this.packages + "." + this.name;
+        addPackageLines();
+    }
+
+    private void addPackageLines() {
+        addLines(createLines(), "package " + packages + ";\r\n");
     }
 
     public int createLines() {
@@ -93,5 +99,17 @@ public class ClassModel {
 
     public void addImport(String importStr) {
         addLinesIfNotExist(this.importLinesIndex, "import " + importStr + ";\r\n");
+    }
+
+    public void createClassLines() {
+        int classLinesIndex = createLines();
+        addLines(classLinesIndex, "\r\n");
+        addLines(classLinesIndex, "public class " + name + " {\r\n");
+    }
+
+    public void createEndLines() {
+        int endLinesIndex = createLines();
+        addLines(endLinesIndex, "\r\n");
+        addLines(endLinesIndex, "}\r\n");
     }
 }

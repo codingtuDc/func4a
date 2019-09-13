@@ -92,7 +92,23 @@ public class HeroProcessor extends BaseProcessor {
         Ls.ls(cms, new MapEach<String, ClassModel>() {
             @Override
             public boolean each(int position, String s, ClassModel cm) {
-                createClass(cm);
+                createClass(cm, new DealClassModel() {
+                    @Override
+                    public void deal(ClassModel cm) {
+
+                        List<String> onClickSubLines = cm.getSubLines(onClickLinesIndex);
+                        int count = CountFunc.count(onClickSubLines);
+                        if (count > 0) {
+                            cm.addLines(onClickLinesIndex, "        switch (v.getId()) {\r\n");
+                            for (int i = 0; i < count; i++) {
+                                cm.addLines(onClickLinesIndex, onClickSubLines.get(i));
+                            }
+                            cm.addLines(onClickLinesIndex, "        }\r\n");
+                        }
+
+
+                    }
+                });
                 return false;
             }
         });
@@ -125,10 +141,10 @@ public class HeroProcessor extends BaseProcessor {
             if ("boolean".equals(typeStr)) {
                 cm.addImport(PACKAGE_PERMISSION + ".PermissionFunc");
                 cm.addLines(onPermissionsBackLI, "PermissionFunc.allow(grantResults)");
-            }else if ("java.lang.String[]".equals(typeStr)) {
-                cm.addLines(onPermissionsBackLI,"permissions");
-            }else if ("int[]".equals(typeStr)) {
-                cm.addLines(onPermissionsBackLI,"grantResults");
+            } else if ("java.lang.String[]".equals(typeStr)) {
+                cm.addLines(onPermissionsBackLI, "permissions");
+            } else if ("int[]".equals(typeStr)) {
+                cm.addLines(onPermissionsBackLI, "grantResults");
             }
 
             if (i < count - 1) {
@@ -203,16 +219,13 @@ public class HeroProcessor extends BaseProcessor {
         if (cm == null) {
             cm = new ClassModel(mElementUtils, te, PREX);
 
-            int packageLinesIndex = cm.createLines();
-            cm.addLines(packageLinesIndex, "package " + cm.packages + ";\r\n");
-
             cm.importLinesIndex = cm.createLines();
             cm.addLines(cm.importLinesIndex, "\r\n");
             cm.addLines(cm.importLinesIndex, "import android.app.Activity;\r\n");
             cm.addLines(cm.importLinesIndex, "import android.content.Intent;\r\n");
             cm.addLines(cm.importLinesIndex, "import android.support.v4.app.Fragment;\r\n");
             cm.addLines(cm.importLinesIndex, "import android.view.View;\r\n");
-            cm.addLines(cm.importLinesIndex, "import cn.com.codingtu.func4a.core.hero.Hero;\r\n");
+            cm.addLines(cm.importLinesIndex, "import " + PACKAGE_CORE + ".hero.Hero;\r\n");
             cm.addLines(cm.importLinesIndex, "import okhttp3.ResponseBody;\r\n");
             cm.addLines(cm.importLinesIndex, "import retrofit2.adapter.rxjava2.Result;\r\n");
 
@@ -274,38 +287,15 @@ public class HeroProcessor extends BaseProcessor {
             cm.addLines(onPermissionsBackLI, "    public void onPermissionsBack(int requestCode, String[] permissions, int[] grantResults) {\r\n");
             cm.addLines(onPermissionsBackLI, "\r\n");
 
-            int endLI = cm.createLines();
-            cm.addLines(endLI, "    }\r\n");
-            cm.addLines(endLI, "}\r\n");
+            int onPermissionsBackEndLI = cm.createLines();
+            cm.addLines(onPermissionsBackEndLI, "    }\r\n");
+
+            //end
+            cm.createEndLines();
 
             cms.put(fullName, cm);
         }
         return cm;
     }
-
-    private void createClass(ClassModel cm) {
-        try {
-
-            JavaFileObject jfo = processingEnv.getFiler().createSourceFile(cm.fullName);
-            Writer writer = jfo.openWriter();
-
-            List<String> onClickSubLines = cm.getSubLines(onClickLinesIndex);
-            int count = CountFunc.count(onClickSubLines);
-            if (count > 0) {
-                cm.addLines(onClickLinesIndex, "        switch (v.getId()) {\r\n");
-                for (int i = 0; i < count; i++) {
-                    cm.addLines(onClickLinesIndex, onClickSubLines.get(i));
-                }
-                cm.addLines(onClickLinesIndex, "        }\r\n");
-            }
-
-            writer.write(cm.getLines());
-            writer.flush();
-            writer.close();
-        } catch (IOException e) {
-            log(e.getMessage());
-        }
-    }
-
 
 }
