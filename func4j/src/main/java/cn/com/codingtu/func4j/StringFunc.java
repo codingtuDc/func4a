@@ -71,4 +71,8 @@ public class StringFunc {
         return sb.toString();
     }
 
+    public static String getMethodName(String str) {
+        return str.substring(0, 1).toLowerCase() + str.substring(1);
+    }
+
 }

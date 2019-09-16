@@ -5,13 +5,13 @@ import android.widget.TextView;
 
 import cn.com.codingtu.func4a.R;
 import cn.com.codingtu.func4a.User;
-import cn.com.codingtu.func4a.core.Pass;
+import cn.com.codingtu.func4a.core.ActLuncher;
 import cn.com.codingtu.func4a.core.activity.CoreActivity;
 import cn.com.codingtu.func4a.core.processor.annotation.activity.Launcher;
 import cn.com.codingtu.func4a.core.processor.annotation.view.FindView;
 
-@Launcher(paramClasses = User.class, paramNames = "user")
-public class OneActivity extends CoreActivity {
+@Launcher(paramClasses = User.class,paramNames = "user")
+public class TwoActivity extends CoreActivity {
 
     @FindView(R.id.tv)
     TextView tv;
@@ -21,6 +21,6 @@ public class OneActivity extends CoreActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        User user = Pass.user(getIntent());
+        ActLuncher.oneActivity(getThis(),new User());
     }
 }
