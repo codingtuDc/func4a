@@ -75,4 +75,7 @@ public class StringFunc {
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
+    public static String getSimpleName(String clazz) {
+        return clazz.substring(clazz.lastIndexOf(".") + 1);
+    }
 }

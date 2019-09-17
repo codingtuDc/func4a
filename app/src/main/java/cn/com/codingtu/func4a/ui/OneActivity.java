@@ -1,13 +1,16 @@
 package cn.com.codingtu.func4a.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import cn.com.codingtu.func4a.R;
 import cn.com.codingtu.func4a.User;
+import cn.com.codingtu.func4a.core.Code4Request;
 import cn.com.codingtu.func4a.core.Pass;
 import cn.com.codingtu.func4a.core.activity.CoreActivity;
 import cn.com.codingtu.func4a.core.processor.annotation.activity.Launcher;
+import cn.com.codingtu.func4a.core.processor.annotation.onactivityresult.OnResult4Activity;
 import cn.com.codingtu.func4a.core.processor.annotation.view.FindView;
 
 @Launcher(paramClasses = User.class, paramNames = "user")
@@ -22,5 +25,15 @@ public class OneActivity extends CoreActivity {
         setContentView(R.layout.activity_main);
 
         User user = Pass.user(getIntent());
+    }
+
+    @OnResult4Activity(value = TwoActivity.class, isDeal = false)
+    public void ccc(int requestCode, int resultCode, Intent data) {
+
+    }
+
+    @OnResult4Activity(TwoActivity.class)
+    public void aaa(User user) {
+
     }
 }

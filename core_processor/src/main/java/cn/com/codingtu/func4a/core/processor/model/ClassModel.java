@@ -52,8 +52,12 @@ public class ClassModel {
         return lines.size() - 1;
     }
 
-    public void addLines(int index, String line) {
-        this.lines.get(index).add(line);
+    public void addLines(int linesIndex, String line) {
+        this.lines.get(linesIndex).add(line);
+    }
+
+    public void addLines(int linesIndex, int listIndex, String line) {
+        this.lines.get(linesIndex).add(listIndex, line);
     }
 
     public void addLinesIfNotExist(int index, String line) {
@@ -99,12 +103,6 @@ public class ClassModel {
 
     public void addImport(String importStr) {
         addLinesIfNotExist(this.importLinesIndex, "import " + importStr + ";\r\n");
-    }
-
-    public void createClassLines() {
-        int classLinesIndex = createLines();
-        addLines(classLinesIndex, "\r\n");
-        addLines(classLinesIndex, "public class " + name + " {\r\n");
     }
 
     public void createEndLines() {

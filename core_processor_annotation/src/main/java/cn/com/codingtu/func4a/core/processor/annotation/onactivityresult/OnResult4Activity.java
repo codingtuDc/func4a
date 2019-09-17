@@ -7,4 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.SOURCE)
 public @interface OnResult4Activity {
     Class value();
+
+    boolean isDeal() default true;
 }

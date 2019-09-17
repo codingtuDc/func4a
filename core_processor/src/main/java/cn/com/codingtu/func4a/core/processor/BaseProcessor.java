@@ -1,6 +1,5 @@
 package cn.com.codingtu.func4a.core.processor;
 
-import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
 
 import java.io.IOException;
@@ -12,7 +11,6 @@ import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -24,8 +22,6 @@ import cn.com.codingtu.func4a.core.processor.funcs.IdFunc;
 import cn.com.codingtu.func4a.core.processor.model.ClassModel;
 import cn.com.codingtu.func4j.ls.Ls;
 import cn.com.codingtu.func4j.ls.each.Each;
-
-import static java.util.Objects.requireNonNull;
 
 public abstract class BaseProcessor extends AbstractProcessor {
 
@@ -70,14 +66,13 @@ public abstract class BaseProcessor extends AbstractProcessor {
         mMessager.printMessage(Diagnostic.Kind.NOTE, msg);
     }
 
-    protected void createClass(ClassModel cm, DealClassModel dealClassModel) {
+    protected void createClass(ClassModel cm) {
+        if (cm == null)
+            return;
+
         try {
             JavaFileObject jfo = processingEnv.getFiler().createSourceFile(cm.fullName);
             Writer writer = jfo.openWriter();
-
-            if (dealClassModel != null)
-                dealClassModel.deal(cm);
-
             writer.write(cm.getLines());
             writer.flush();
             writer.close();
