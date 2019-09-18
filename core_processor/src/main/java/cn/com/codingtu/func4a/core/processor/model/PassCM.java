@@ -81,7 +81,7 @@ public class PassCM extends ClassModel {
 
     public void addMethod(String paramClass, String paramName) {
         addImport(paramClass);
-        String simpleName = StringFunc.getSimpleName(paramClass);
+        String simpleName = StringFunc.getClassName(paramClass);
         addLines(methodLinesIndex, "\r\n");
         addLines(methodLinesIndex, "  public static final " + simpleName + " " + paramName + "(Intent data) {\r\n");
         if ("int".equals(simpleName)) {

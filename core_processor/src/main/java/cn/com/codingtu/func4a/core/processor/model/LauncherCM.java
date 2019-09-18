@@ -35,7 +35,7 @@ public class LauncherCM extends ClassModel {
 
     public void addLauncher(String act, List<String> paramClasses, String[] paramNames) {
 
-        String className = StringFunc.getSimpleName(act);
+        String className = StringFunc.getClassName(act);
         String staticName = StringFunc.getStaticName(className);
         String methodName = StringFunc.getMethodName(className);
 
@@ -47,7 +47,7 @@ public class LauncherCM extends ClassModel {
         for (int i = 0; i < CountFunc.count(paramClasses); i++) {
             String paramClassName = paramClasses.get(i);
             addImport(paramClassName);
-            addLines(launcherLinesIndex, ", " + StringFunc.getSimpleName(paramClassName) + " " + paramNames[i]);
+            addLines(launcherLinesIndex, ", " + StringFunc.getClassName(paramClassName) + " " + paramNames[i]);
         }
 
         addLines(launcherLinesIndex, ") {\r\n");

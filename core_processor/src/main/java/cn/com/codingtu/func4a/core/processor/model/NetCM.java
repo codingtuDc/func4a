@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 
@@ -94,7 +93,7 @@ public class NetCM extends ClassModel {
 
     public void addMethod(TypeElement te, BaseUrl baseUrl, ExecutableElement ee) {
         String apiClassName = te.asType().toString();
-        String apiSimpleName = StringFunc.getSimpleName(apiClassName);
+        String apiSimpleName = StringFunc.getClassName(apiClassName);
 
         addImport(apiClassName);
 
@@ -113,7 +112,7 @@ public class NetCM extends ClassModel {
         for (int i = 0; i < count; i++) {
             VariableElement ve = parameters.get(i);
             String className = ve.asType().toString();
-            String vClassName = StringFunc.getSimpleName(className);
+            String vClassName = StringFunc.getClassName(className);
             String vName = ve.getSimpleName().toString();
 
             addImport(className);

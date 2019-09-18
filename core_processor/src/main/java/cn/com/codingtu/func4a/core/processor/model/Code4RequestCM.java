@@ -26,7 +26,7 @@ public class Code4RequestCM extends ClassModel {
 
     public void addCode(String name) {
         addLines(codeLinesIndex, "\r\n");
-        addLines(codeLinesIndex, "  public static final int " + StringFunc.getStaticName(StringFunc.getSimpleName(name)) + " = " + index++ + ";\r\n");
+        addLines(codeLinesIndex, "  public static final int " + StringFunc.getStaticName(StringFunc.getClassName(name)) + " = " + index++ + ";\r\n");
     }
 
 }

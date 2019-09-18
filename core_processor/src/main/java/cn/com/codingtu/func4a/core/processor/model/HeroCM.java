@@ -4,11 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
-import javax.xml.ws.Response;
 
 import cn.com.codingtu.func4a.core.processor.BaseProcessor;
 import cn.com.codingtu.func4a.core.processor.annotation.net.NetBack;
@@ -249,7 +247,7 @@ public class HeroCM extends ClassModel {
 
 
         String backClass = ClassFunc.getOnResult4ActivityValue(onResult);
-        String simpleName = StringFunc.getSimpleName(backClass);
+        String simpleName = StringFunc.getClassName(backClass);
         String staticName = StringFunc.getStaticName(simpleName);
         String methodName = ee.getSimpleName().toString();
 
@@ -316,7 +314,7 @@ public class HeroCM extends ClassModel {
 
             addImport(netBackValue);
 
-            String backDealSimpleName = StringFunc.getSimpleName(netBackValue);
+            String backDealSimpleName = StringFunc.getClassName(netBackValue);
 
 
             addLines(acceptLinesIndex, "        if (\"" + methodName + "\".equals(code)) {\r\n");
@@ -330,7 +328,7 @@ public class HeroCM extends ClassModel {
             for (int i = 0; i < count; i++) {
                 VariableElement ve = parameters.get(i);
                 String type = ve.asType().toString();
-                String tName = StringFunc.getSimpleName(type);
+                String tName = StringFunc.getClassName(type);
                 String vName = ve.getSimpleName().toString();
                 if (i == 0) {
                     sbM.append(tName + " " + vName);
