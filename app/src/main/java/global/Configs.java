@@ -1,8 +1,7 @@
 package global;
 
-import cn.com.codingtu.func4a.core.json.jsonholder.JsonHolder;
-import cn.com.codingtu.func4a.core.net.RetrofitManager;
-import cn.com.codingtu.func4a.global.CoreConfigs;
+import core.json.jsonholder.JsonHolder;
+import core.net.RetrofitManager;
 
 public class Configs extends CoreConfigs {
     @Override
