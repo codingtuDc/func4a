@@ -27,5 +27,3 @@ public class OneActivity extends CoreActivity {
 ```
 ActLuncher.oneActivity(getThis(),new User());
 ```
-
-在

@@ -102,6 +102,11 @@ public class ClassModel {
     }
 
     public void addImport(String importStr) {
+
+        if ("int".equals(importStr)) {
+            return;
+        }
+
         addLinesIfNotExist(this.importLinesIndex, "import " + importStr + ";\r\n");
     }
 

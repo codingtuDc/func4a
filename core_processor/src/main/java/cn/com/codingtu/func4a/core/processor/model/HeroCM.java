@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
@@ -17,6 +18,8 @@ import cn.com.codingtu.func4a.core.processor.funcs.ClassFunc;
 import cn.com.codingtu.func4a.core.processor.funcs.IdFunc;
 import cn.com.codingtu.func4j.CountFunc;
 import cn.com.codingtu.func4j.StringFunc;
+import cn.com.codingtu.func4j.ls.Ls;
+import cn.com.codingtu.func4j.ls.each.Each;
 
 public class HeroCM extends ClassModel {
 
@@ -223,17 +226,54 @@ public class HeroCM extends ClassModel {
     public void addResult(ExecutableElement ee) {
         OnResult4Activity onResult = ee.getAnnotation(OnResult4Activity.class);
         boolean isDeal = onResult.isDeal();
+        List<? extends VariableElement> parameters = ee.getParameters();
 
-        List<String> annotationClasses = ClassFunc.getAnnotationClasses(new ClassFunc.AnnotationClassGetter() {
-            @Override
-            public Object get() {
-                return onResult.value();
+        int count = CountFunc.count(parameters);
+        if (!isDeal) {
+            if (count != 3) {
+                return;
+            } else {
+                if (!"int".equals(parameters.get(0).asType().toString())) {
+                    return;
+                }
+                if (!"int".equals(parameters.get(1).asType().toString())) {
+                    return;
+                }
+                if (!"android.content.Intent".equals(parameters.get(2).asType().toString())) {
+                    return;
+                }
             }
-        });
+        }
 
-        addLines(resultLinesIndex, "        if (requestCode == Code4Request.TWO_ACTIVITY) {\r\n");
+
+        String backClass = ClassFunc.getOnResult4ActivityValue(onResult);
+        String simpleName = StringFunc.getSimpleName(backClass);
+        String staticName = StringFunc.getStaticName(simpleName);
+        String methodName = ee.getSimpleName().toString();
+
+        addImport(BaseProcessor.PACKAGE_CORE + ".Code4Request");
+
+        addLines(resultLinesIndex, "        if (requestCode == Code4Request." + staticName + ") {\r\n");
         addLines(resultLinesIndex, "            if (resultCode == Activity.RESULT_OK) {\r\n");
-        addLines(resultLinesIndex, "                this.binder.aaa(Pass.user(data));\r\n");
+        addLines(resultLinesIndex, "                this.binder." + methodName + "(");
+
+        if (isDeal) {
+            addImport(BaseProcessor.PACKAGE_CORE + ".Pass");
+            Ls.ls(parameters, new Each<VariableElement>() {
+                @Override
+                public boolean each(int position, VariableElement ve) {
+                    if (position == count - 1) {
+                        addLines(resultLinesIndex, "Pass." + ve.getSimpleName().toString() + "(data)");
+                    } else {
+                        addLines(resultLinesIndex, "Pass." + ve.getSimpleName().toString() + "(data), ");
+                    }
+                    return false;
+                }
+            });
+        } else {
+            addLines(resultLinesIndex, "requestCode, resultCode, data");
+        }
+        addLines(resultLinesIndex, ");\r\n");
         addLines(resultLinesIndex, "            }\r\n");
         addLines(resultLinesIndex, "        }\r\n");
     }

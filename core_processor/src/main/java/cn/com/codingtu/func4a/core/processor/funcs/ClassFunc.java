@@ -6,12 +6,22 @@ import java.util.List;
 import javax.lang.model.type.MirroredTypesException;
 import javax.lang.model.type.TypeMirror;
 
+import cn.com.codingtu.func4a.core.processor.annotation.onactivityresult.OnResult4Activity;
 import cn.com.codingtu.func4j.CountFunc;
 import cn.com.codingtu.func4j.ls.Ls;
 import cn.com.codingtu.func4j.ls.each.Each;
 
 public class ClassFunc {
 
+
+    public static String getOnResult4ActivityValue(OnResult4Activity onResult4Activity) {
+        return getAnnotationClasses(new AnnotationClassGetter() {
+            @Override
+            public Object get() {
+                return onResult4Activity.value();
+            }
+        }).get(0);
+    }
 
     public static List<String> getAnnotationClasses(AnnotationClassGetter getter) {
         try {

@@ -3,7 +3,11 @@ package cn.com.codingtu.func4a.core.processor.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.VariableElement;
+
 import cn.com.codingtu.func4a.core.processor.BaseProcessor;
+import cn.com.codingtu.func4a.core.processor.annotation.onactivityresult.OnResult4Activity;
 import cn.com.codingtu.func4j.CountFunc;
 import cn.com.codingtu.func4j.StringFunc;
 
@@ -38,6 +42,27 @@ public class PassCM extends ClassModel {
         createEndLines();
     }
 
+
+    public void addOnResult(ExecutableElement ee) {
+        OnResult4Activity onResult4Activity = ee.getAnnotation(OnResult4Activity.class);
+        if (onResult4Activity.isDeal()) {
+            List<? extends VariableElement> parameters = ee.getParameters();
+
+            int count = CountFunc.count(parameters);
+
+            ArrayList<String> paramClasses = new ArrayList<String>();
+            String[] paramNames = new String[count];
+
+            for (int i = 0; i < count; i++) {
+                VariableElement ve = parameters.get(i);
+                paramClasses.add(ve.asType().toString());
+                paramNames[i] = ve.getSimpleName().toString();
+            }
+            addPass(paramClasses, paramNames);
+        }
+    }
+
+
     public void addPass(List<String> paramClasses, String[] paramNames) {
         for (int i = 0; i < CountFunc.count(paramClasses); i++) {
             String paramName = paramNames[i];
@@ -59,8 +84,15 @@ public class PassCM extends ClassModel {
         String simpleName = StringFunc.getSimpleName(paramClass);
         addLines(methodLinesIndex, "\r\n");
         addLines(methodLinesIndex, "  public static final " + simpleName + " " + paramName + "(Intent data) {\r\n");
-        addLines(methodLinesIndex, "    return JsonFunc.toBean(" + simpleName + ".class, data.getStringExtra(" + paramName.toUpperCase() + "));\r\n");
+        if ("int".equals(simpleName)) {
+            addLines(methodLinesIndex, "        return data.getIntExtra(" + paramName.toUpperCase() + ", -404);\r\n");
+        } else if ("String".equals(simpleName)) {
+            addLines(methodLinesIndex, "        return data.getStringExtra(" + paramName.toUpperCase() + ");\r\n");
+        } else {
+            addLines(methodLinesIndex, "    return JsonFunc.toBean(" + simpleName + ".class, data.getStringExtra(" + paramName.toUpperCase() + "));\r\n");
+        }
         addLines(methodLinesIndex, "  }\r\n");
         addLines(methodLinesIndex, "\r\n");
     }
+
 }

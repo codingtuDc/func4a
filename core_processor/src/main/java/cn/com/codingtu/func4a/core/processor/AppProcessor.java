@@ -167,6 +167,7 @@ public class AppProcessor extends BaseProcessor {
 
     private void dealOnResult4Activity(int position, ExecutableElement ee) {
         getHeroCM(ee).addResult(ee);
+        passCM.addOnResult(ee);
     }
 
     private void dealLauncher(TypeElement te) {
@@ -183,6 +184,11 @@ public class AppProcessor extends BaseProcessor {
     }
 
 
+    /*******************************************
+     *
+     * 获取HeroCM的方法
+     *
+     *******************************************/
     private HeroCM getHeroCM(VariableElement ve) {
         return getHeroCM((TypeElement) ve.getEnclosingElement());
     }

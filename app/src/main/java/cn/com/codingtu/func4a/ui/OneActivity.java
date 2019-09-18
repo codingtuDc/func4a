@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import cn.com.codingtu.func4a.Me;
 import cn.com.codingtu.func4a.R;
 import cn.com.codingtu.func4a.User;
 import cn.com.codingtu.func4a.core.Code4Request;
@@ -33,7 +34,7 @@ public class OneActivity extends CoreActivity {
     }
 
     @OnResult4Activity(TwoActivity.class)
-    public void aaa(User user) {
+    public void aaa(User user, String code) {
 
     }
 }
