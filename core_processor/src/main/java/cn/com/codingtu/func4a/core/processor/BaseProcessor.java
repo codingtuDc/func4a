@@ -28,6 +28,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
     public static final String PACKAGE_BASE = "cn.com.codingtu.func4a";
     public static final String PACKAGE_CORE = PACKAGE_BASE + ".core";
     public static final String PACKAGE_PERMISSION = PACKAGE_CORE + ".permission";
+    public static final String CLASS_RESPONSE = "retrofit2.Response<okhttp3.ResponseBody>";
 
     protected Messager mMessager;
     protected Elements mElementUtils;

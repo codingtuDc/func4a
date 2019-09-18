@@ -8,8 +8,10 @@ import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
+import javax.xml.ws.Response;
 
 import cn.com.codingtu.func4a.core.processor.BaseProcessor;
+import cn.com.codingtu.func4a.core.processor.annotation.net.NetBack;
 import cn.com.codingtu.func4a.core.processor.annotation.onactivityresult.OnResult4Activity;
 import cn.com.codingtu.func4a.core.processor.annotation.onclick.ClickTag;
 import cn.com.codingtu.func4a.core.processor.annotation.onclick.ClickView;
@@ -278,8 +280,79 @@ public class HeroCM extends ClassModel {
         addLines(resultLinesIndex, "        }\r\n");
     }
 
-    public void addAccept() {
-        addLines(acceptLinesIndex, "\r\n");
+    public void addAccept(ExecutableElement ee) {
+
+        addImport(BaseProcessor.PACKAGE_CORE + ".net.Net");
+
+        String methodName = ee.getSimpleName().toString();
+
+        NetBack netBack = ee.getAnnotation(NetBack.class);
+
+        String netBackValue = ClassFunc.getNetBackValue(netBack);
+
+        List<? extends VariableElement> parameters = ee.getParameters();
+        int count = CountFunc.count(parameters);
+
+        if (Void.class.getName().equals(netBackValue)) {
+            //Throwable error, Response<ResponseBody> response
+
+            if (count != 2) {
+                return;
+            }
+
+            if (!Throwable.class.getName().equals(parameters.get(0).asType().toString())) {
+                return;
+            }
+
+            if (!BaseProcessor.CLASS_RESPONSE.equals(parameters.get(1).asType().toString())) {
+                return;
+            }
+
+            addLines(acceptLinesIndex, "\r\n");
+            addLines(acceptLinesIndex, "        if (\"" + methodName + "\".equals(code)) {\r\n");
+            addLines(acceptLinesIndex, "            this.binder." + methodName + "(result.error(), result.response());\r\n");
+            addLines(acceptLinesIndex, "        }\r\n");
+        } else {
+
+            addImport(netBackValue);
+
+            String backDealSimpleName = StringFunc.getSimpleName(netBackValue);
+
+
+            addLines(acceptLinesIndex, "        if (\"" + methodName + "\".equals(code)) {\r\n");
+            addLines(acceptLinesIndex, "            new " + backDealSimpleName + "() {\n");
+            addLines(acceptLinesIndex, "                @Override\n");
+            addLines(acceptLinesIndex, "                public void back(");
+
+
+            StringBuilder sbM = new StringBuilder();
+            StringBuilder sbV = new StringBuilder();
+            for (int i = 0; i < count; i++) {
+                VariableElement ve = parameters.get(i);
+                String type = ve.asType().toString();
+                String tName = StringFunc.getSimpleName(type);
+                String vName = ve.getSimpleName().toString();
+                if (i == 0) {
+                    sbM.append(tName + " " + vName);
+                    sbV.append(vName);
+                } else {
+                    sbM.append(", " + tName + " " + vName);
+                    sbV.append(", " + vName);
+                }
+            }
+
+            addLines(acceptLinesIndex, sbM.toString());
+            addLines(acceptLinesIndex, ") {\n");
+            addLines(acceptLinesIndex, "                    binder." + methodName + "(");
+            addLines(acceptLinesIndex, sbV.toString());
+            addLines(acceptLinesIndex, ");\n");
+            addLines(acceptLinesIndex, "                }\n");
+            addLines(acceptLinesIndex, "            }.accept(code, result);\n");
+            addLines(acceptLinesIndex, "        }\n");
+
+        }
+
+
     }
 
 

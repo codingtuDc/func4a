@@ -101,10 +101,21 @@ public class ClassModel {
         return null;
     }
 
+    private Class[] exceptClasses = new Class[]{
+            int.class,
+            long.class,
+            double.class,
+            float.class,
+            boolean.class,
+            String.class
+    };
+
     public void addImport(String importStr) {
 
-        if ("int".equals(importStr)) {
-            return;
+        for (int i = 0; i < exceptClasses.length; i++) {
+            if (exceptClasses[i].getName().equals(importStr)) {
+                return;
+            }
         }
 
         addLinesIfNotExist(this.importLinesIndex, "import " + importStr + ";\r\n");

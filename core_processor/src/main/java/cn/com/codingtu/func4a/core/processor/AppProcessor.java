@@ -19,6 +19,8 @@ import javax.lang.model.element.VariableElement;
 import javax.tools.JavaFileObject;
 
 import cn.com.codingtu.func4a.core.processor.annotation.activity.Launcher;
+import cn.com.codingtu.func4a.core.processor.annotation.net.Api;
+import cn.com.codingtu.func4a.core.processor.annotation.net.NetBack;
 import cn.com.codingtu.func4a.core.processor.annotation.onactivityresult.OnResult4Activity;
 import cn.com.codingtu.func4a.core.processor.annotation.onclick.ClickTag;
 import cn.com.codingtu.func4a.core.processor.annotation.onclick.ClickView;
@@ -30,6 +32,7 @@ import cn.com.codingtu.func4a.core.processor.model.ClassModel;
 import cn.com.codingtu.func4a.core.processor.model.Code4RequestCM;
 import cn.com.codingtu.func4a.core.processor.model.HeroCM;
 import cn.com.codingtu.func4a.core.processor.model.LauncherCM;
+import cn.com.codingtu.func4a.core.processor.model.NetCM;
 import cn.com.codingtu.func4a.core.processor.model.PassCM;
 import cn.com.codingtu.func4a.core.processor.model.PermissionCM;
 import cn.com.codingtu.func4j.CountFunc;
@@ -47,6 +50,7 @@ public class AppProcessor extends BaseProcessor {
     private PassCM passCM;
     private Code4RequestCM code4RequestCM;
     private PermissionCM permissionCM;
+    private NetCM netCM;
 
 
     @Override
@@ -57,7 +61,9 @@ public class AppProcessor extends BaseProcessor {
                 ClickTag.class,
                 PermissionCheck.class,
                 Launcher.class,
-                OnResult4Activity.class
+                OnResult4Activity.class,
+                Api.class,
+                NetBack.class
         };
     }
 
@@ -68,6 +74,7 @@ public class AppProcessor extends BaseProcessor {
         passCM = new PassCM();
         code4RequestCM = new Code4RequestCM();
         permissionCM = new PermissionCM();
+        netCM = new NetCM();
     }
 
     @Override
@@ -115,7 +122,26 @@ public class AppProcessor extends BaseProcessor {
                 return false;
             }
         });
-
+        //Net
+        ls(roundEnvironment, Api.class, new Each<Element>() {
+            @Override
+            public boolean each(int position, Element element) {
+                if (element instanceof TypeElement) {
+                    dealApi((TypeElement) element);
+                }
+                return false;
+            }
+        });
+        //NetBack
+        ls(roundEnvironment, NetBack.class, new Each<Element>() {
+            @Override
+            public boolean each(int position, Element element) {
+                if (element instanceof ExecutableElement) {
+                    dealNetBack((ExecutableElement) element);
+                }
+                return false;
+            }
+        });
         //Launcher
         ls(roundEnvironment, Launcher.class, new Each<Element>() {
             @Override
@@ -140,6 +166,7 @@ public class AppProcessor extends BaseProcessor {
         createClass(passCM);
         createClass(code4RequestCM);
         createClass(permissionCM);
+        createClass(netCM);
 
         //clear
         heros.clear();
@@ -147,9 +174,11 @@ public class AppProcessor extends BaseProcessor {
         passCM = null;
         code4RequestCM = null;
         permissionCM = null;
+        netCM = null;
 
         return true;
     }
+
 
     private void dealFindViewElement(VariableElement ve) {
         getHeroCM(ve).addConstructer(ve);
@@ -168,6 +197,14 @@ public class AppProcessor extends BaseProcessor {
     private void dealOnResult4Activity(int position, ExecutableElement ee) {
         getHeroCM(ee).addResult(ee);
         passCM.addOnResult(ee);
+    }
+
+    private void dealApi(TypeElement te) {
+        netCM.addNet(te);
+    }
+
+    private void dealNetBack(ExecutableElement ee) {
+        getHeroCM(ee).addAccept(ee);
     }
 
     private void dealLauncher(TypeElement te) {
